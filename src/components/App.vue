@@ -11,7 +11,10 @@
         .editor-title Code Editor
       .editor-container
         codemirror.editor-area(v-model="code" :options="cmOptions")
-      button.btn-run-code(@click="runCode") Run Code
+        button.btn-run-code(@click="runCode") Run Code
+      .console-container
+        .log-container
+          .log(v-for="log in logs" :class="log.type") {{log.text}}
 </template>
 
 <style lang="sass" scoped>
@@ -36,7 +39,7 @@
     margin: 0
 
 .editor-area
-  min-height: 80vh
+  height: 600px
 
 .editor-panel
   position: relative
@@ -66,6 +69,7 @@
 
   .editor-container
     padding: 5px 20px
+    height: 100%
 
   .editor-window-decoration
     position: absolute
@@ -106,9 +110,30 @@ button.btn-run-code
   border-radius: 8px
   z-index: 10
   transition: 1s all cubic-bezier(0.19, 0.16, 0, 1.27)
+  outline: none
 
   &:hover
     transform: scale(1.15)
+
+.console-container
+  position: absolute
+  bottom: 0
+  width: 100%
+  height: 150px
+  overflow: scroll
+  background: #21232c
+  box-shadow: 0px -6px 8px rgba(0, 0, 0, 0.1)
+
+.log-container
+  padding: 20px
+  font-size: 20px
+  line-height: 1.5
+
+.log.info
+  color: white
+
+.log.error
+  color: #fa5b52
 </style>
 
 <script lang="ts">
@@ -167,7 +192,7 @@ export default Vue.extend({
     patch() {
       window.__BRYTHON__.builtins.print = (...args) => {
         console.log(`[Python] ${args.join('\n')}`)
-        this.logs = [...this.logs, args.join('\n')]
+        this.logs = [...this.logs, { text: args.join('\n'), type: 'info' }]
       }
     },
     runCode() {
@@ -175,7 +200,15 @@ export default Vue.extend({
         this.patch()
         run(this.code)
       } catch (error) {
-        console.warn('User Code Error!', error)
+        console.warn('User Code Error!', error.message)
+
+        if (error.$py_error) {
+          window.error = error
+          this.logs = [
+            ...this.logs,
+            { text: `${error.msg} at line ${error.lineno}`, type: 'error' },
+          ]
+        }
       }
     },
   },
