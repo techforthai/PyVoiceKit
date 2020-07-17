@@ -1359,6 +1359,11 @@ browserslist@^4.0.0, browserslist@^4.1.0, browserslist@^4.12.0, browserslist@^4.
     escalade "^3.0.1"
     node-releases "^1.1.58"
 
+brython@^3.8.9:
+  version "3.8.9"
+  resolved "https://registry.yarnpkg.com/brython/-/brython-3.8.9.tgz#5f52f9907281b861aa8dc343436ea20267dc10f4"
+  integrity sha512-iSY5r3Mev+L6HhoTkS93j0r4qzyXRdx8eexSum217cK4dIfA312nYcdCyAETvmKpHBCIVOw0skRs4peb4yQxqQ==
+
 buffer-equal@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/buffer-equal/-/buffer-equal-0.0.1.tgz#91bc74b11ea405bc916bc6aa908faafa5b4aac4b"
@@ -5395,6 +5400,11 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
+
+vue-touch-ripple@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/vue-touch-ripple/-/vue-touch-ripple-3.0.0.tgz#aa2a65e6eee2996d2cdad830e9e1f62355428c35"
+  integrity sha512-uktP7Q/tQ4rAGYfiKhYr7uQUWWuelBdljZkQUECApEIVAgjvYeKku4uEq6jz3CN2gV/6R7reYMFsKnaZknPoEQ==
 
 vue@^2.6.11:
   version "2.6.11"
