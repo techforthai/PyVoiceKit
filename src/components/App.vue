@@ -106,7 +106,7 @@ const cmOptions: EditorConfiguration = {
   theme: 'dracula',
   lineNumbers: false,
   keyMap: 'vim',
-  showCursorWhenSelecting: true,
+  showCursorWhenSelecting: false,
   viewportMargin: Infinity,
 }
 
