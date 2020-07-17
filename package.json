@@ -1,0 +1,27 @@
+{
+  "name": "pyvoicekit",
+  "version": "1.0.0",
+  "main": "src/main.ts",
+  "repository": "git@github.com:techforthai/PyVoiceKit.git",
+  "author": "Phoomparin Mano <phoomparin@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel serve src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "dependencies": {
+    "codemirror": "^5.55.0",
+    "vue": "^2.6.11",
+    "vue-codemirror": "^4.0.6",
+    "vue-hot-reload-api": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/codemirror": "^0.0.97",
+    "@vue/component-compiler-utils": "^3.1.2",
+    "parcel": "^1.12.4",
+    "pug": "^3.0.0",
+    "sass": "^1.26.10",
+    "typescript": "^3.9.7",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
