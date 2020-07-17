@@ -3,7 +3,7 @@
     .panel.display-panel
       h1 {{message}}
       .div(v-if="youtubeId")
-        iframe(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
+        iframe.youtube-frame(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
     .panel.editor-panel
       .editor-titlebar
         .editor-window-decoration
@@ -29,6 +29,7 @@
 
 .display-panel
   display: flex
+  flex-direction: column
   align-items: center
   justify-content: center
   min-height: 100vh
@@ -135,6 +136,10 @@ button.btn-run-code
 
 .log.error
   color: #fa5b52
+
+.youtube-frame
+  margin-top: 30px
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5)
 </style>
 
 <script lang="ts">
