@@ -200,10 +200,10 @@ export default Vue.extend({
         this.patch()
         run(this.code)
       } catch (error) {
+        window.error = error
         console.warn('User Code Error!', error.message)
 
         if (error.$py_error) {
-          window.error = error
           this.logs = [
             ...this.logs,
             { text: `${error.msg} at line ${error.lineno}`, type: 'error' },
