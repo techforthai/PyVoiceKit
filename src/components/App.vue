@@ -2,6 +2,8 @@
   .app(:style="backdropStyle")
     .panel.display-panel
       h1 {{message}}
+      .div(v-if="youtubeId")
+        iframe(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
     .panel.editor-panel
       .editor-titlebar
         .editor-window-decoration
@@ -172,6 +174,9 @@ def setColor(color):
 
 def showText(text):
   window.eval("showText(\`%s\`)" % text)
+
+def youtube(youtubeId):
+  window.eval("youtube(\`%s\`)" % youtubeId)
   `.trim()
 
   return extras + '\n' + code
@@ -201,11 +206,13 @@ export default Vue.extend({
     logs: [],
     message: 'Voice Kit',
     color: '#9b59b6',
+    youtubeId: '',
   }),
 
   mounted() {
     window.showText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
+    window.youtube = (youtubeId: string) => (this.youtubeId = youtubeId)
   },
 
   methods: {
@@ -243,6 +250,9 @@ export default Vue.extend({
       return {
         background: this.color,
       }
+    },
+    youtubeSrc() {
+      return `https://www.youtube.com/embed/${this.youtubeId}?autoplay=1&showinfo=0&controls=0`
     },
   },
 })
