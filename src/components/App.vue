@@ -153,7 +153,7 @@ const cmOptions: EditorConfiguration = {
   mode: 'python',
   theme: 'dracula',
   lineNumbers: false,
-  keyMap: 'vim',
+  // keyMap: 'vim',
   showCursorWhenSelecting: false,
   viewportMargin: Infinity,
 }
