@@ -1,7 +1,7 @@
 <template lang="pug">
-  .app
+  .app(:style="backdropStyle")
     .panel.display-panel
-      h1 Voice Kit
+      h1 {{message}}
     .panel.editor-panel
       .editor-titlebar
         .editor-window-decoration
@@ -30,7 +30,6 @@
   align-items: center
   justify-content: center
   min-height: 100vh
-  background: #9b59b6
   width: 60%
 
   h1
@@ -158,12 +157,30 @@ const cmOptions: EditorConfiguration = {
   viewportMargin: Infinity,
 }
 
-const starterCode = `print("Hello, World!")`.trim()
+const starterCode = `
+print("Hello, World!")
+showText("Welcome to Voice Kit!")
+setColor("#8e44ad")
+`.trim()
+
+function withExtras(code: string) {
+  const extras = `
+from browser import window
+
+def setColor(color):
+  window.eval("setColor(\`%s\`)" % color)
+
+def showText(text):
+  window.eval("showText(\`%s\`)" % text)
+  `.trim()
+
+  return extras + '\n' + code
+}
 
 function run(code: string) {
   if (!window.__BRYTHON__) return
 
-  const js = window.__BRYTHON__.python_to_js(code)
+  const js = window.__BRYTHON__.python_to_js(withExtras(code))
 
   console.groupCollapsed('ℹ️ Translating Python to JavaScript')
   console.log('Python:', code)
@@ -182,10 +199,13 @@ export default Vue.extend({
     code: starterCode,
     cmOptions,
     logs: [],
+    message: 'Voice Kit',
+    color: '#9b59b6',
   }),
 
   mounted() {
-    window.app = this
+    window.showText = (text: string) => (this.message = text)
+    window.setColor = (color: string) => (this.color = color)
   },
 
   methods: {
@@ -206,9 +226,22 @@ export default Vue.extend({
         if (error.$py_error) {
           this.logs = [
             ...this.logs,
-            { text: `${error.msg} at line ${error.lineno}`, type: 'error' },
+            {
+              text:
+                `${error.args[0]}` +
+                (error.lineno ? `at line ${error.lineno}` : ''),
+              type: 'error',
+            },
           ]
         }
+      }
+    },
+  },
+
+  computed: {
+    backdropStyle() {
+      return {
+        background: this.color,
       }
     },
   },
