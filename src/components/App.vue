@@ -2,6 +2,7 @@
   .app.backdrop(:style="backdropStyle")
     .panel.display-panel(:class="displayPanelClass")
       h1 {{message}}
+      input.text-field(v-model="textField" @keyup.enter="submitText")
       .div(v-if="youtubeId")
         iframe.youtube-frame(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
       button.btn-show-editor(@click="toggleEditor" v-if="!isShowingEditor") Show Editor
@@ -43,6 +44,18 @@
 
 .editor-area
   height: 600px
+
+.text-field
+  margin-top: 40px
+  font-size: 25px
+  border: none
+  border-radius: 50em
+  padding: 10px 15px
+  outline: none
+  width: 70%
+  color: #121
+  padding-left: 25px
+  font-family: 'JetBrains Mono', sans-serif
 
 .backdrop
   background-size: cover
@@ -291,7 +304,8 @@ export default Vue.extend({
     color: '#9b59b6',
     youtubeId: '',
     transcripts: [],
-    isShowingEditor: false
+    isShowingEditor: false,
+    textField: ''
   }),
 
   mounted() {
@@ -338,6 +352,10 @@ export default Vue.extend({
   methods: {
     toggleEditor() {
       this.isShowingEditor = !this.isShowingEditor
+    },
+    submitText() {
+      this.transcripts = [...this.transcripts, this.textField]
+      this.runCode()
     },
     patch() {
       window.__BRYTHON__.builtins.print = (...args) => {
