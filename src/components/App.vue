@@ -204,7 +204,7 @@ const cmOptions: EditorConfiguration = {
 
 const starterCode = `
 print("Hello, World!")
-showText("Welcome to Voice Kit!")
+setText("Welcome to Voice Kit!")
 setColor("#8e44ad")
 `.trim()
 
@@ -218,8 +218,8 @@ def setColor(color):
 def setImage(image):
   window.eval("setImage(\`%s\`)" % image)
 
-def showText(text):
-  window.eval("showText(\`%s\`)" % text)
+def setText(text):
+  window.eval("setText(\`%s\`)" % text)
 
 def youtube(youtubeId):
   window.eval("youtube(\`%s\`)" % youtubeId)
@@ -293,7 +293,7 @@ export default Vue.extend({
   }),
 
   mounted() {
-    window.showText = (text: string) => (this.message = text)
+    window.setText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
     window.setImage = (image: string) => (this.color = `url(${image})`)
     window.youtube = (youtubeId: string) => (this.youtubeId = youtubeId)
