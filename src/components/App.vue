@@ -2,10 +2,10 @@
   .app.backdrop(:style="backdropStyle")
     .panel.display-panel(v-if="!isFullEditor" :class="displayPanelClass")
       h1 {{message}}
-      input.text-field(v-model="textField" @keyup.enter="submitText")
+      input.text-field(v-model="textField" @keyup.enter="submitText" :placeholder="lastText")
       .div(v-if="youtubeId")
         iframe.youtube-frame(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
-      button.btn-start-speech(@click="startSpeech")
+      button.btn-start-speech(@click="startSpeech" :class="microphoneClass")
         i.far.fa-microphone
       button.btn-show-editor(@click="toggleEditor" v-if="!isShowingEditor") Show Editor
     .panel.editor-panel(v-if="isShowingEditor" :class="editorPanelClass")
@@ -27,6 +27,7 @@
 .app
   display: flex
   width: 100%
+  padding: 35px 0
 
   min-height: 100vh
   font-family: "JetBrains Mono", monospace
@@ -121,6 +122,9 @@
   cursor: pointer
   background: #53c32b
 
+.is-listening
+  transform: scale(1.5)
+
 button.btn-show-editor
   position: fixed
   top: 20px
@@ -169,6 +173,7 @@ button.btn-start-speech
   cursor: pointer
   outline: none
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3)
+  transition: 1s all cubic-bezier(0.33, 0.39, 0, 1.49)
 
 .console-container
   position: absolute
@@ -191,7 +196,7 @@ button.btn-start-speech
   color: #fa5b52
 
 .youtube-frame
-  margin-top: 30px
+  margin-top: 60px
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5)
 </style>
 
@@ -323,8 +328,7 @@ export default Vue.extend({
     isShowingEditor: false,
     isFullEditor: false,
     textField: '',
-    isListening: false,
-    isSpeaking: false
+    isListening: false
   }),
 
   mounted() {
@@ -342,11 +346,14 @@ export default Vue.extend({
       this.youtubeId = match[1]
     }
 
-    window.listen = (text: string) => this.transcripts.pop()
+    window.listen = (text: string) =>
+      this.transcripts[this.transcripts.length - 1]
+
     window.say = (text: string) => speak(text)
 
     speech.onstart = () => {
       console.log('👂🏻 listening...')
+      this.isListening = true
     }
 
     speech.onresult = e => {
@@ -356,9 +363,8 @@ export default Vue.extend({
       this.transcripts = [...this.transcripts, text]
       this.runCode()
 
-      console.log(this.transcripts)
-
-      this.isSpeaking = false
+      console.log('Transcripts:', this.transcripts)
+      this.isListening = false
     }
 
     setInterval(() => saveEditor(this.code), 2000)
@@ -366,9 +372,8 @@ export default Vue.extend({
 
   methods: {
     startSpeech() {
-      if (this.isSpeaking) return
+      if (this.isListening) return
 
-      this.isSpeaking = true
       speech.start()
     },
     toggleEditor() {
@@ -429,8 +434,18 @@ export default Vue.extend({
       }
     },
 
+    microphoneClass() {
+      return {
+        'is-listening': this.isListening
+      }
+    },
+
     youtubeSrc() {
       return `https://www.youtube.com/embed/${this.youtubeId}?autoplay=1&showinfo=0&controls=0`
+    },
+
+    lastText() {
+      return this.transcripts[this.transcripts.length - 1]
     }
   }
 })
