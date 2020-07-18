@@ -10,8 +10,10 @@
     "build": "parcel build src/index.html"
   },
   "dependencies": {
+    "@types/howler": "^2.2.1",
     "brython": "^3.8.9",
     "codemirror": "^5.55.0",
+    "howler": "^2.2.0",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
     "vue-hot-reload-api": "^2.3.4",

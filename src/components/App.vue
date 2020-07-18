@@ -204,6 +204,7 @@ button.btn-start-speech
 import Vue from 'vue'
 import { codemirror } from 'vue-codemirror'
 import { EditorConfiguration } from 'codemirror'
+import { Howl, Howler } from 'howler'
 
 import { app } from '../main'
 
@@ -261,11 +262,14 @@ def youtube(youtubeId):
 def speak(text): 
   print("H")
 
-def listen() : 
+def listen(): 
   return window.eval("listen()")
 
-def say(text) : 
+def say(text): 
   window.eval("say(\`%s\`)" % text)
+
+def playSound(url):
+  window.eval("playSound(\`%s\`)" % url)
 `.trim()
 
   return extras + '\n' + code
@@ -344,6 +348,12 @@ export default Vue.extend({
       if (!match) return
 
       this.youtubeId = match[1]
+    }
+
+    window.playSound = (url: string) => {
+      const sound = new Howl({ src: [url] })
+
+      sound.play()
     }
 
     window.listen = (text: string) =>
