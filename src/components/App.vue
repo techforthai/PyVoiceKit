@@ -154,6 +154,20 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/theme/dracula.css'
 import 'codemirror/keymap/vim.js'
 
+const SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+const SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
+const SpeechRecognitionEvent =
+  SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+
+const speech = new SpeechRecognition()
+window.speech = speech
+
+speech.lang = 'th-TH'
+// speech.continuous = true
+
+const isThai = (text: string) =>
+  Array.from(text).some(x => /[\u0E00-\u0E7F]/.test(x))
+
 const cmOptions: EditorConfiguration = {
   tabSize: 2,
   mode: 'python',
@@ -161,7 +175,7 @@ const cmOptions: EditorConfiguration = {
   lineNumbers: false,
   // keyMap: 'vim',
   showCursorWhenSelecting: false,
-  viewportMargin: Infinity,
+  viewportMargin: Infinity
 }
 
 const starterCode = `
@@ -182,7 +196,16 @@ def showText(text):
 
 def youtube(youtubeId):
   window.eval("youtube(\`%s\`)" % youtubeId)
-  `.trim()
+
+def speak(text): 
+  print("H")
+
+def listen() : 
+  return window.eval("listen()")
+
+def say(text) : 
+  window.eval("say(\`%s\`)" % text)
+`.trim()
 
   return extras + '\n' + code
 }
@@ -200,7 +223,33 @@ function run(code: string) {
   return eval.call(this, js)
 }
 
+function speak(text) {
+  const sid = Math.random().toString(36)
+
+  const u = new SpeechSynthesisUtterance(text)
+  u.volume = 1 // 0 - 1
+  u.pitch = 1 // 0 - 2
+  u.rate = 1 // 0 - 10
+
+  if (isThai(text)) {
+    const Kanya = speechSynthesis.getVoices().find(x => x.voiceURI === 'Kanya')
+    u.voice = Kanya
+    u.lang = 'th-TH'
+  }
+
+  u.onerror = e => {
+    console.error('TTS Error:', e)
+  }
+
+  u.onstart = e => speech.stop()
+
+  speechSynthesis.speak(u)
+
+  return u
+}
+
 window.run = run
+window.speak = speak
 
 export default Vue.extend({
   components: { codemirror },
@@ -212,12 +261,35 @@ export default Vue.extend({
     message: 'Voice Kit',
     color: '#9b59b6',
     youtubeId: '',
+    transcripts: []
   }),
 
   mounted() {
     window.showText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
     window.youtube = (youtubeId: string) => (this.youtubeId = youtubeId)
+    window.listen = (text: string) => this.transcripts.pop()
+    window.say = (text: string) => speak(text)
+
+    speech.onstart = () => {
+      console.log('👂🏻 listening...')
+    }
+
+    speech.onresult = e => {
+      const text = e.results[0][0].transcript
+      console.log('💬:', text)
+
+      this.transcripts = [...this.transcripts, text]
+      this.runCode()
+
+      console.log(this.transcripts)
+    }
+
+    speech.onend = () => {
+      speech.start()
+    }
+
+    speech.start()
   },
 
   methods: {
@@ -242,23 +314,23 @@ export default Vue.extend({
               text:
                 `${error.args[0]}` +
                 (error.lineno ? `at line ${error.lineno}` : ''),
-              type: 'error',
-            },
+              type: 'error'
+            }
           ]
         }
       }
-    },
+    }
   },
 
   computed: {
     backdropStyle() {
       return {
-        background: this.color,
+        background: this.color
       }
     },
     youtubeSrc() {
       return `https://www.youtube.com/embed/${this.youtubeId}?autoplay=1&showinfo=0&controls=0`
-    },
-  },
+    }
+  }
 })
 </script>
