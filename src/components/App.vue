@@ -5,6 +5,8 @@
       input.text-field(v-model="textField" @keyup.enter="submitText")
       .div(v-if="youtubeId")
         iframe.youtube-frame(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
+      button.btn-start-speech(@click="startSpeech")
+        i.far.fa-microphone
       button.btn-show-editor(@click="toggleEditor" v-if="!isShowingEditor") Show Editor
     .panel.editor-panel(v-if="isShowingEditor")
       .editor-titlebar
@@ -46,7 +48,7 @@
   height: 600px
 
 .text-field
-  margin-top: 40px
+  margin-top: 30px
   font-size: 25px
   border: none
   border-radius: 50em
@@ -153,6 +155,19 @@ button.btn-run-code
 
   &:hover
     transform: scale(1.15)
+
+button.btn-start-speech
+  border: none
+  font-size: 36px
+  background: #e74c3c
+  color: white
+  width: 60px
+  height: 60px
+  border-radius: 50%
+  margin-top: 40px
+  cursor: pointer
+  outline: none
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3)
 
 .console-container
   position: absolute
@@ -305,7 +320,9 @@ export default Vue.extend({
     youtubeId: '',
     transcripts: [],
     isShowingEditor: false,
-    textField: ''
+    textField: '',
+    isListening: false,
+    isSpeaking: false
   }),
 
   mounted() {
@@ -338,18 +355,20 @@ export default Vue.extend({
       this.runCode()
 
       console.log(this.transcripts)
-    }
 
-    speech.onend = () => {
-      speech.start()
+      this.isSpeaking = false
     }
-
-    speech.start()
 
     setInterval(() => saveEditor(this.code), 2000)
   },
 
   methods: {
+    startSpeech() {
+      if (this.isSpeaking) return
+
+      this.isSpeaking = true
+      speech.start()
+    },
     toggleEditor() {
       this.isShowingEditor = !this.isShowingEditor
     },
