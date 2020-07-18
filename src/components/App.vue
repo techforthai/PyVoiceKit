@@ -296,7 +296,12 @@ export default Vue.extend({
     window.setText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
     window.setImage = (image: string) => (this.color = `url(${image})`)
-    window.youtube = (youtubeId: string) => (this.youtubeId = youtubeId)
+    window.youtube = (query: string) => {
+      const match = query.match(/youtube\.com\/watch\?v\=(\w+)/)
+      if (!match) return
+
+      this.youtubeId = match[1]
+    }
     window.listen = (text: string) => this.transcripts.pop()
     window.say = (text: string) => speak(text)
 
