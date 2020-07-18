@@ -278,6 +278,8 @@ function speak(text) {
 window.run = run
 window.speak = speak
 
+const saveEditor = (code: string) => localStorage.setItem('editor.code', code)
+
 export default Vue.extend({
   components: { codemirror },
 
@@ -293,15 +295,20 @@ export default Vue.extend({
   }),
 
   mounted() {
+    const savedCode = localStorage.getItem('editor.code')
+    if (savedCode) this.code = savedCode
+
     window.setText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
     window.setImage = (image: string) => (this.color = `url(${image})`)
+
     window.youtube = (query: string) => {
       const match = query.match(/youtube\.com\/watch\?v\=(\w+)/)
       if (!match) return
 
       this.youtubeId = match[1]
     }
+
     window.listen = (text: string) => this.transcripts.pop()
     window.say = (text: string) => speak(text)
 
@@ -324,6 +331,8 @@ export default Vue.extend({
     }
 
     speech.start()
+
+    setInterval(() => saveEditor(this.code), 2000)
   },
 
   methods: {
