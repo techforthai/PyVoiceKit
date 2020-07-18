@@ -1,13 +1,14 @@
 <template lang="pug">
   .app(:style="backdropStyle")
-    .panel.display-panel
+    .panel.display-panel(:class="displayPanelClass")
       h1 {{message}}
       .div(v-if="youtubeId")
         iframe.youtube-frame(width="500" height="500" :src="youtubeSrc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
-    .panel.editor-panel
+      button.btn-show-editor(@click="toggleEditor" v-if="!isShowingEditor") Show Editor
+    .panel.editor-panel(v-if="isShowingEditor")
       .editor-titlebar
         .editor-window-decoration
-          .dot.red
+          .dot.red(@click="toggleEditor")
           .dot.yellow
           .dot.green
         .editor-title Code Editor
@@ -89,6 +90,7 @@
   margin-left: 10px
 
 .dot.red
+  cursor: pointer
   background: #fa5b52
 
 .dot.yellow
@@ -96,6 +98,22 @@
 
 .dot.green
   background: #53c32b
+
+button.btn-show-editor
+  position: fixed
+  top: 20px
+  right: 20px
+  z-index: 20
+  padding: 10px 15px
+  font-size: 1.3em
+  background: linear-gradient(-225deg, #f15f79 35%, #b24592 100%)
+  color: white
+  border: none
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5)
+  border-radius: 4px
+  outline: none
+  font-family: "JetBrains Mono", monospace
+  cursor: pointer
 
 button.btn-run-code
   font-size: 24px
@@ -261,7 +279,8 @@ export default Vue.extend({
     message: 'Voice Kit',
     color: '#9b59b6',
     youtubeId: '',
-    transcripts: []
+    transcripts: [],
+    isShowingEditor: false
   }),
 
   mounted() {
@@ -293,6 +312,9 @@ export default Vue.extend({
   },
 
   methods: {
+    toggleEditor() {
+      this.isShowingEditor = !this.isShowingEditor
+    },
     patch() {
       window.__BRYTHON__.builtins.print = (...args) => {
         console.log(`[Python] ${args.join('\n')}`)
@@ -328,6 +350,13 @@ export default Vue.extend({
         background: this.color
       }
     },
+
+    displayPanelClass() {
+      return {
+        'is-full-width': !this.isShowingEditor
+      }
+    },
+
     youtubeSrc() {
       return `https://www.youtube.com/embed/${this.youtubeId}?autoplay=1&showinfo=0&controls=0`
     }
