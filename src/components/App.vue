@@ -1,6 +1,6 @@
 <template lang="pug">
   .app.backdrop(:style="backdropStyle")
-    .panel.display-panel(:class="displayPanelClass")
+    .panel.display-panel(v-if="!isFullEditor" :class="displayPanelClass")
       h1 {{message}}
       input.text-field(v-model="textField" @keyup.enter="submitText")
       .div(v-if="youtubeId")
@@ -8,12 +8,12 @@
       button.btn-start-speech(@click="startSpeech")
         i.far.fa-microphone
       button.btn-show-editor(@click="toggleEditor" v-if="!isShowingEditor") Show Editor
-    .panel.editor-panel(v-if="isShowingEditor")
+    .panel.editor-panel(v-if="isShowingEditor" :class="editorPanelClass")
       .editor-titlebar
         .editor-window-decoration
           .dot.red(@click="toggleEditor")
           .dot.yellow
-          .dot.green
+          .dot.green(@click="toggleFullEditor")
         .editor-title Code Editor
       .editor-container
         codemirror.editor-area(v-model="code" :options="cmOptions")
@@ -118,6 +118,7 @@
   background: #e6c02b
 
 .dot.green
+  cursor: pointer
   background: #53c32b
 
 button.btn-show-editor
@@ -320,6 +321,7 @@ export default Vue.extend({
     youtubeId: '',
     transcripts: [],
     isShowingEditor: false,
+    isFullEditor: false,
     textField: '',
     isListening: false,
     isSpeaking: false
@@ -372,6 +374,9 @@ export default Vue.extend({
     toggleEditor() {
       this.isShowingEditor = !this.isShowingEditor
     },
+    toggleFullEditor() {
+      this.isFullEditor = !this.isFullEditor
+    },
     submitText() {
       this.transcripts = [...this.transcripts, this.textField]
       this.runCode()
@@ -415,6 +420,12 @@ export default Vue.extend({
     displayPanelClass() {
       return {
         'is-full-width': !this.isShowingEditor
+      }
+    },
+
+    editorPanelClass() {
+      return {
+        'is-full-width': this.isFullEditor
       }
     },
 
