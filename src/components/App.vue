@@ -1,5 +1,5 @@
 <template lang="pug">
-  .app(:style="backdropStyle")
+  .app.backdrop(:style="backdropStyle")
     .panel.display-panel(:class="displayPanelClass")
       h1 {{message}}
       .div(v-if="youtubeId")
@@ -43,6 +43,12 @@
 
 .editor-area
   height: 600px
+
+.backdrop
+  background-size: cover
+  background-repeat: no-repeat
+  background-attachment: fixed
+  background-position: center center
 
 .editor-panel
   position: relative
@@ -209,6 +215,9 @@ from browser import window
 def setColor(color):
   window.eval("setColor(\`%s\`)" % color)
 
+def setImage(image):
+  window.eval("setImage(\`%s\`)" % image)
+
 def showText(text):
   window.eval("showText(\`%s\`)" % text)
 
@@ -286,6 +295,7 @@ export default Vue.extend({
   mounted() {
     window.showText = (text: string) => (this.message = text)
     window.setColor = (color: string) => (this.color = color)
+    window.setImage = (image: string) => (this.color = `url(${image})`)
     window.youtube = (youtubeId: string) => (this.youtubeId = youtubeId)
     window.listen = (text: string) => this.transcripts.pop()
     window.say = (text: string) => speak(text)
